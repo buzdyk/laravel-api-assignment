@@ -35,4 +35,14 @@ class CreateOrUpdatePlayer extends FormRequest
             'playerSkills.*.value' => 'required|numeric|min:1|max:100',
         ];
     }
+
+//    this won't work
+//    public function messages()
+//    {
+//        return [
+//            'playerSkills.*.skill' => [
+//                Enum::class => 'Invalid value for skill: :input',
+//            ]
+//        ];
+//    }
 }

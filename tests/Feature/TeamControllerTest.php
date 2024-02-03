@@ -7,10 +7,8 @@
 
 namespace Tests\Feature;
 
-
 use App\Models\Player;
 use App\Models\PlayerSkill;
-use Database\Factories\PlayerSkillFactory;
 
 class TeamControllerTest extends PlayerControllerBaseTest
 {
@@ -29,7 +27,7 @@ class TeamControllerTest extends PlayerControllerBaseTest
         $this->assertNotNull($res);
     }
 
-    public function ddtest_it_returns_matches()
+    public function test_it_returns_matches()
     {
         $mid1 = Player::factory()->midfielder()->create();
         PlayerSkill::factory()->speed(90)->create(['player_id' => $mid1->id]);
@@ -64,6 +62,27 @@ class TeamControllerTest extends PlayerControllerBaseTest
         $this->assertEquals($res[0][0]['id'], $mid3->id);
         $this->assertEquals($res[0][1]['id'], $mid1->id);
         $this->assertEquals($res[1][0]['id'], $fwd1->id);
+    }
+
+    public function test_it_return_error_if_not_enough_players_for_position()
+    {
+        $mid1 = Player::factory()->midfielder()->create();
+        PlayerSkill::factory()->speed(90)->create(['player_id' => $mid1->id]);
+        PlayerSkill::factory()->defense(50)->create(['player_id' => $mid1->id]);
+
+        $fwd1 = Player::factory()->forward()->create();
+        PlayerSkill::factory()->strength(100)->create(['player_id' => $fwd1->id]);
+
+        $res = $this->postJson(self::REQ_TEAM_URI, [
+            [
+                'position' => "midfielder",
+                'mainSkill' => "strength",
+                'numberOfPlayers' => 2
+            ]
+        ]);
+
+        $res->assertStatus(422);
+        $this->assertEquals($res->json('message'), 'Insufficient number of players for position: midfielder');
     }
 
     public function test_it_rejects_duplicate_pairs()

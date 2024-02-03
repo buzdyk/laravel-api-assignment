@@ -46,13 +46,26 @@ class PlayerControllerCreateTest extends PlayerControllerBaseTest
 
     public function test_it_validates_input_and_provides_error_in_expected_format()
     {
-        $data = $this->validFormdata(['position' => 'invalid position string']);
+        $data = $this->validFormdata(['position' => 'carry']);
         $res = $this->postJson(self::REQ_URI, $data);
         $res->assertStatus(422);
 
-        $data = $this->validFormdata(['playerSkills' => [0 => ['skill' => 'invalid skill string']]]);
+        $this->assertEquals('Invalid value for position: carry', $res->json('message'));
+
+        $data = $this->validFormdata(['playerSkills' => [0 => ['skill' => 'heal']]]);
         $res = $this->postJson(self::REQ_URI, $data);
         $res->assertStatus(422);
+
+        // note on a bit ugly playerSkills.0.skill
+        // message replacer won't work in lang/validation 'custom' => or in CreateOrUpdatePlayer::messages
+        // fixing it would require reading source code or writing a custom replacer
+        // which is presumably outside the test assignment scope
+        $this->assertEquals('Invalid value for playerSkills.0.skill: heal', $res->json('message'));
+
+        $data = $this->validFormdata(['position' => 'carry', 'playerSkills' => [0 => ['skill' => 'heal']]]);
+        $res = $this->postJson(self::REQ_URI, $data);
+        $res->assertStatus(422);
+        $this->assertCount(1, $res->json(), 'validation response contains only one field');
     }
 
     private function validFormdata(array $mergeIn = [])
