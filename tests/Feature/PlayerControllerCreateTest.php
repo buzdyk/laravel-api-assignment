@@ -29,9 +29,12 @@ class PlayerControllerCreateTest extends PlayerControllerBaseTest
         $res = $this->postJson(self::REQ_URI, $data);
 
         $res->assertStatus(200);
+
+        $this->assertPlayerJsonStructure($res->json());
         $this->assertEquals(1, Player::count());
 
         $player = Player::first();
+
         $this->assertEquals($data['name'], $player->name);
         $this->assertEquals($data['position'], $player->position->value);
 
@@ -41,7 +44,7 @@ class PlayerControllerCreateTest extends PlayerControllerBaseTest
         }
     }
 
-    public function it_validates_input_and_provides_error_in_expected_format()
+    public function test_it_validates_input_and_provides_error_in_expected_format()
     {
         $data = $this->validFormdata(['position' => 'invalid position string']);
         $res = $this->postJson(self::REQ_URI, $data);

@@ -7,6 +7,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Player;
+
 class PlayerControllerListingTest extends PlayerControllerBaseTest
 {
     public function test_sample()
@@ -16,8 +18,23 @@ class PlayerControllerListingTest extends PlayerControllerBaseTest
         $this->assertNotNull($res);
     }
 
-    public function it_lists_players()
+    public function test_it_lists_players_when_they_exist()
     {
-        $this->assertTrue(false);
+        Player::factory()->count(5)->create();
+
+        $res = $this->get(self::REQ_URI);
+
+        $this->assertEquals(5, count($res->json()));
+
+        foreach ($res->json() as $player) {
+            $this->assertPlayerJsonStructure($player);
+        }
+    }
+
+    public function test_it_doesnt_list_players_if_no_players()
+    {
+        $res = $this->get(self::REQ_URI);
+
+        $this->assertEquals(0, count($res->json()));
     }
 }

@@ -73,6 +73,8 @@ class PlayerControllerUpdateTest extends PlayerControllerBaseTest
         $res = $this->putJson(self::REQ_URI . $player->id, $payload);
         $res->assertStatus(200);
 
+        $this->assertPlayerJsonStructure($res->json());
+
         $player = $player->fresh();
 
         $this->assertEquals($payload['name'], $player->name);
@@ -83,15 +85,14 @@ class PlayerControllerUpdateTest extends PlayerControllerBaseTest
             $this->assertTrue(array_key_exists($skill->skill->value, $skillsPayload));
             $this->assertEquals($skillsPayload[$skill->skill->value]['value'], $skill->value);
         }
-
-        // todo validate response as well
     }
 
-    public function it_fails_if_input_is_not_valid()
+    public function test_it_fails_if_input_is_not_valid()
     {
+        $player = Player::factory()->create();
         $data = [];
 
-        $res = $this->putJson(self::REQ_URI . '1', $data);
+        $res = $this->putJson(self::REQ_URI . $player->id, $data);
         $res->assertStatus(422);
     }
 }

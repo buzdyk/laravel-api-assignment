@@ -17,12 +17,12 @@ class PlayerController extends Controller
 {
     public function index()
     {
-        return response("Failed", 500);
+        return response(PlayerResource::collection(Player::all()));
     }
 
-    public function show()
+    public function show(Player $player)
     {
-        return response("Failed", 500);
+        return response(new PlayerResource($player));
     }
 
     public function store(CreateOrUpdatePlayer $request)
