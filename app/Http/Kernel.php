@@ -7,7 +7,6 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\CustomAuthMiddleware;
 use App\Http\Middleware\ProtectWithAuthBearerToken;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 \App\Http\Middleware\_::_();

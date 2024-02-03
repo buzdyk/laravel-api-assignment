@@ -39,4 +39,13 @@ class Player extends Model
     {
         return $this->hasMany(PlayerSkill::class);
     }
+
+    public function syncSkills(array $skills)
+    {
+        foreach ($skills as $i => $skill) {
+            $skills[$i]['player_id'] = $this->id;
+        }
+
+        $this->skills()->upsert($skills, ['player_id', 'skill']);
+    }
 }

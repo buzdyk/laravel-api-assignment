@@ -9,6 +9,8 @@
 namespace Tests\Feature;
 
 
+use App\Models\Player;
+
 class PlayerControllerCreateTest extends PlayerControllerBaseTest
 {
     public function test_sample()
@@ -20,13 +22,23 @@ class PlayerControllerCreateTest extends PlayerControllerBaseTest
         $this->assertNotNull($res);
     }
 
-    public function it_creates_a_player_with_skills()
+    public function test_it_creates_a_player_with_skills()
     {
         $data = $this->validFormdata();
 
         $res = $this->postJson(self::REQ_URI, $data);
 
         $res->assertStatus(200);
+        $this->assertEquals(1, Player::count());
+
+        $player = Player::first();
+        $this->assertEquals($data['name'], $player->name);
+        $this->assertEquals($data['position'], $player->position->value);
+
+        foreach ($player->skills as $i => $skill) {
+            $this->assertEquals($data['playerSkills'][$i]['skill'], $skill->skill->value);
+            $this->assertEquals($data['playerSkills'][$i]['value'], $skill->value);
+        }
     }
 
     public function it_validates_input_and_provides_error_in_expected_format()

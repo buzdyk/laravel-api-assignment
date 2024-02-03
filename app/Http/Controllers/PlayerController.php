@@ -8,6 +8,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\PlayerPosition;
+use App\Http\Requests\CreateOrUpdatePlayer;
+use App\Http\Resources\PlayerResource;
 use App\Models\Player;
 use Illuminate\Http\Request;
 
@@ -23,29 +25,18 @@ class PlayerController extends Controller
         return response("Failed", 500);
     }
 
-    public function store(Request $request)
+    public function store(CreateOrUpdatePlayer $request)
     {
-        $data = $this->validate($request, [
-            'name' => 'required|string|max:20',
-            'position' => 'required|in:' . join(',', PlayerPosition::cases()),
-            'playerSkills' => 'required|min:1',
-            'playerSkills.skill' => 'required|string|unique|in:' . join(',', PlayerPosition::cases()),
-            'playerSkills.value' => 'required|numeric|min:1|max:100',
-        ]);
+        $data = $request->safe();
 
-        return response("Failed", 500);
+        $player = Player::create($data->only(['name', 'position']));
+        $player->syncSkills($data['playerSkills']);
+
+        return response(new PlayerResource($player));
     }
 
-    public function update(Player $player, Request $request)
+    public function update(Player $player, CreateOrUpdatePlayer $request)
     {
-        $data = $this->validate($request, [
-            'name' => 'required|string|max:20',
-            'position' => 'required|in:' . join(',', PlayerPosition::cases()),
-            'playerSkills' => 'required|min:1',
-            'playerSkills.skill' => 'required|string|unique|in:' . join(',', PlayerPosition::cases()),
-            'playerSkills.value' => 'required|numeric|min:1|max:100',
-        ]);
-
         return response("Failed", 500);
     }
 
