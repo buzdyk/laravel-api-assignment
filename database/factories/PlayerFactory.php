@@ -15,4 +15,31 @@ class PlayerFactory extends Factory
             'position' => $this->faker->randomElement(PlayerPosition::cases()),
         ];
     }
+
+    public function midfielder()
+    {
+        return $this->state(function () {
+            return [
+                'position' => PlayerPosition::MIDFIELDER,
+            ];
+        });
+    }
+
+    public function forward()
+    {
+        return $this->state(function () {
+            return [
+                'position' => PlayerPosition::FORWARD,
+            ];
+        });
+    }
+
+    public function defender()
+    {
+        return $this->state(function () {
+            return [
+                'position' => PlayerPosition::DEFENDER,
+            ];
+        });
+    }
 }
