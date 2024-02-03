@@ -30,14 +30,19 @@ class PlayerController extends Controller
         $data = $request->safe();
 
         $player = Player::create($data->only(['name', 'position']));
-        $player->syncSkills($data['playerSkills']);
+        $player->syncSkills($data['playerSkills'], false);
 
         return response(new PlayerResource($player));
     }
 
     public function update(Player $player, CreateOrUpdatePlayer $request)
     {
-        return response("Failed", 500);
+        $data = $request->safe();
+
+        $player->update($data->only(['name', 'position']));
+        $player->syncSkills($data['playerSkills'], true);
+
+        return response(new PlayerResource($player));
     }
 
     public function destroy(Player $player)

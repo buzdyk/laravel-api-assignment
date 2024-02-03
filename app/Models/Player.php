@@ -40,12 +40,20 @@ class Player extends Model
         return $this->hasMany(PlayerSkill::class);
     }
 
-    public function syncSkills(array $skills)
+    public function syncSkills(array $skills, $removeDetached = false)
     {
         foreach ($skills as $i => $skill) {
             $skills[$i]['player_id'] = $this->id;
         }
 
         $this->skills()->upsert($skills, ['player_id', 'skill']);
+
+        if ($removeDetached) {
+            $upsertedSkills = array_column($skills, 'skill');
+
+            $this->skills()
+                ->whereNotIn('skill', $upsertedSkills)
+                ->delete();
+        }
     }
 }
