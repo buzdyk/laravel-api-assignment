@@ -16,4 +16,8 @@ class PlayerControllerListingTest extends PlayerControllerBaseTest
         $this->assertNotNull($res);
     }
 
+    public function it_lists_players()
+    {
+        $this->assertTrue(false);
+    }
 }

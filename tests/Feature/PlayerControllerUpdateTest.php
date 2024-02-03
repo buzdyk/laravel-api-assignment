@@ -31,4 +31,20 @@ class PlayerControllerUpdateTest extends PlayerControllerBaseTest
 
         $this->assertNotNull($res);
     }
+
+    public function it_updates_a_player()
+    {
+        $data = [];
+
+        $res = $this->putJson(self::REQ_URI . '1', $data);
+        $res->assertStatus(422);
+    }
+
+    public function it_fails_if_input_is_not_valid()
+    {
+        $data = [];
+
+        $res = $this->putJson(self::REQ_URI . '1', $data);
+        $res->assertStatus(422);
+    }
 }
